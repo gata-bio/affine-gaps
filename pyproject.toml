@@ -4,14 +4,14 @@ build-backend = "hatchling.build"
 
 [project]
 name = "affine-gaps"
-version = "0.2.0"
-description = "Numba-accelerated Python implementation of affine gap penalty extensions for Needleman-Wunsch and Smith-Waterman algorithms"
+version = "1.0.1"
+description = "JIT-compiled string edit-distances including Needleman-Wunsch, Smith-Waterman, Wagner-Fisher, and Gotoh algorithms."
 readme = { file = "README.md", content-type = "text/markdown" }
 authors = [
     { name = "Ash Vardanian", email = "1983160+ashvardanian@users.noreply.github.com" },
 ]
 requires-python = ">=3.6"
-dependencies = ["numba", "numpy", "colorama"]
+dependencies = ["numpy"]
 keywords = ["bioinformatics", "sequence alignment", "numba", "affine gaps"]
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -20,6 +20,7 @@ classifiers = [
 ]
 
 [project.optional-dependencies]
+jit = ["numba", "colorama"]
 dev = ["biopython", "stringzilla", "pytest", "pytest-repeat"]
 
 [tool.pytest.ini_options]

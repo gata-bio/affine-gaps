@@ -126,7 +126,7 @@ $ affine-gaps GIVEQCCTSICSLYQLENYCN HSQGTFTSDYSKYLDSRAEQDFV --local
 To test, install the development dependencies and run the tests.
 
 ```bash
-pip install -e ".[dev]"
+pip install -e ".[dev,jit]"
 pytest test.py -s -x
 ```
 

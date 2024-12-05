@@ -1,7 +1,72 @@
-from typing import Tuple, Optional, Callable
+#!/usr/bin/env python3
+"""
+Affine Gaps Alignment Toolkit
+
+This single-file library and CLI tool provides robust implementations of sequence alignment algorithms,
+including Needleman-Wunsch, Smith-Waterman, and Levenshtein, with support for affine gap penalties. 
+The toolkit is designed for both programmatic use and command-line operation, making it versatile 
+for bio-informatics, computational biology, and general sequence alignment tasks.
+
+Key Features:
+- Global alignment (Needleman-Wunsch with Gotoh extensions)
+- Local alignment (Smith-Waterman with Gotoh extensions)
+- Edit distance computation (Levenshtein)
+- Customizable substitution matrices and gap penalties
+- Optimized for performance with optional NumBa acceleration
+- CLI for quick alignment and scoring of sequences
+
+Usage:
+1. Library:
+    Import and use the library functions for programmatic sequence alignment:
+    >>> from affine_gaps import needleman_wunsch_gotoh_alignment
+    >>> align1, align2, score = needleman_wunsch_gotoh_alignment("GATTACA", "GCATGCU")
+    >>> print("Alignment 1:", align1)
+    >>> print("Alignment 2:", align2)
+    >>> print("Score:", score)
+
+2. CLI:
+    Use the tool directly from the command line for quick alignment tasks:
+    $ python affine_gaps.py GATTACA GCATGCU --local
+    Sequence 1: GATTACA
+    Sequence 2: GCATGCU
+
+    Alignment 1: G-ATTACA
+    Alignment 2: GCAT-GCU
+    Score:       3
+
+Dependencies:
+- Python 3.6+
+- NumPy (required)
+- NumBa (optional, for acceleration)
+- colorama (optional, for colored CLI output)
+
+Author: Ash Vardanian
+Version: 1.0.1
+License: Apache 2.0
+"""
+
+from typing import Tuple, Optional, Callable, Literal
 
 import numpy as np
-import numba as nb
+
+# NumBa is a heavy dependency, that we may not want to avoid
+try:
+    import numba as nb
+
+    HAS_NUMBA = True
+except ImportError:
+    HAS_NUMBA = False
+
+
+# Define decorator to handle optional NumBa
+def jit_if_available(*jit_args, **jit_kwargs):
+    def decorator(func):
+        if HAS_NUMBA:
+            return nb.jit(*jit_args, **jit_kwargs)(func)
+        return func
+
+    return decorator
+
 
 # Constants for operation codes
 MATCH, INSERT, DELETE, SUBSTITUTE = 0, 1, 2, 3
@@ -115,7 +180,7 @@ def _validate_gotoh_arguments(
     return substitution_alphabet, substitution_matrix, gap_opening, gap_extension
 
 
-@nb.jit(nopython=True)
+@jit_if_available(nopython=True)
 def _levenshtein_alignment_kernel(seq1: np.ndarray, seq2: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
     """
     Aligns two sequences using Levenshtein's algorithm.
@@ -166,7 +231,7 @@ def _levenshtein_alignment_kernel(seq1: np.ndarray, seq2: np.ndarray) -> Tuple[n
 
             # Determine the minimum cost operation, preserving the operation kind
             if score == replace:
-                changes[i, j] = MATCH if seq1[i - 1] == seq2[j - 1] else SUBSTITUTE
+                changes[i, j] = SUBSTITUTE if substitution else MATCH
             elif score == delete:
                 changes[i, j] = DELETE
             else:
@@ -196,7 +261,7 @@ def levenshtein_alignment(str1: str, str2: str) -> Tuple[str, str, int]:
     return align1, align2, int(scores[-1, -1])
 
 
-@nb.jit(nopython=True)
+@jit_if_available(nopython=True)
 def _needleman_wunsch_gotoh_kernel(
     seq1: np.ndarray,
     seq2: np.ndarray,
@@ -387,7 +452,7 @@ def needleman_wunsch_gotoh_alignment(
     return align1, align2, int(scores[-1, -1])
 
 
-@nb.jit(nopython=True)
+@jit_if_available(nopython=True)
 def needleman_wunsch_gotoh_score_kernel(
     seq1: np.ndarray,
     seq2: np.ndarray,
@@ -530,7 +595,7 @@ def needleman_wunsch_gotoh_score(
     return int(score)
 
 
-@nb.jit(nopython=True)
+@jit_if_available(nopython=True)
 def _smith_waterman_gotoh_kernel(
     seq1: np.ndarray,
     seq2: np.ndarray,
@@ -713,7 +778,7 @@ def smith_waterman_gotoh_alignment(
     return align1, align2, int(scores[prefix1, prefix2])
 
 
-@nb.jit(nopython=True)
+@jit_if_available(nopython=True)
 def smith_waterman_gotoh_score_kernel(
     seq1: np.ndarray,
     seq2: np.ndarray,
@@ -838,7 +903,7 @@ def smith_waterman_gotoh_score(
     return int(score)
 
 
-def colorize_alignment(align1: str, align2: str, background: str = "dark") -> Tuple[str, str]:
+def colorize_alignment(align1: str, align2: str, background: Literal["dark", "light"] = "dark") -> Tuple[str, str]:
     """
     Colorizes the alignment strings for visual distinction between matches, mismatches, and gaps.
     Adjusts colors based on the specified background color.
