@@ -1,3 +1,15 @@
+#!/usr/bin/env python3
+"""
+Test suite for affine gap alignment functions.
+
+This suite validates the correctness and consistency of several alignment functions, 
+including Needleman-Wunsch, Smith-Waterman, and Levenshtein alignments. Tests ensure:
+
+- Symmetry of alignment scores.
+- Consistency with external tools like EMBOSS `Needle` and BioPython `PairwiseAligner`.
+- Proper handling of gap expansions and penalty configurations.
+- Verification of alignment results against known examples and random inputs.
+"""
 import os
 import re
 import math
@@ -21,17 +33,14 @@ from affine_gaps import (
     default_proteins_matrix,
 )
 
-"""
-Test the symmetry of Needleman-Wunsch alignment.
-
-Verifies that the alignment score of A<->B is the same as B<->A for random DNA sequences.
-"""
-
 
 @pytest.mark.repeat(30)
 @pytest.mark.parametrize("min_length", [5, 10])
 @pytest.mark.parametrize("max_length", [15, 25])
 def test_symmetry(min_length: int, max_length: int):
+    """
+    Verify that Needleman-Wunsch alignment is symmetric.
+    """
     alphabet = "ACGT"
     str1 = "".join(choice(alphabet) for _ in range(randint(min_length, max_length)))
     str2 = "".join(choice(alphabet) for _ in range(randint(min_length, max_length)))
@@ -70,7 +79,9 @@ def run_emboss(
     gap_opening: int = -1,
     gap_extension: int = -1,
 ):
-
+    """
+    Run EMBOSS CLI tool for sequence alignment and extract results.
+    """
     matrix_content = f"""
 A  C  G  T
 A  {match}  {mismatch}  {mismatch}  {mismatch}
@@ -150,6 +161,9 @@ T  {mismatch}  {mismatch}  {mismatch}  {match}
 
 
 def replace_single_dashes(text, replacement):
+    """
+    Replace single dashes in a sequence with a specified replacement string.
+    """
     within_line = r"[^-](-)[^-]"
     before_line = r"^(-)[^-]"
     after_line = r"[^-](-)$"
@@ -160,19 +174,16 @@ def replace_single_dashes(text, replacement):
     return result
 
 
-"""
-Test Levenshtein and Needleman-Wunsch-Gotoh alignment consistency.
-
-Ensures that Levenshtein and Needleman-Wunsch-Gotoh alignments produce the same scores and 
-alignments for sequences of varying lengths within a specified alphabet.
-"""
-
-
 @pytest.mark.repeat(30)
 @pytest.mark.parametrize("min_length", [3, 7])
 @pytest.mark.parametrize("max_length", [7, 15])
 def test_against_levenshtein(min_length: int, max_length: int):
+    """
+    Test Levenshtein and Needleman-Wunsch-Gotoh alignment consistency.
 
+    Ensures that Levenshtein and Needleman-Wunsch-Gotoh alignments produce the same scores and
+    alignments for sequences of varying lengths within a specified alphabet.
+    """
     alphabet = "ACGT"
     str1 = "".join(choice(alphabet) for _ in range(randint(min_length, max_length)))
     str2 = "".join(choice(alphabet) for _ in range(randint(min_length, max_length)))
@@ -214,14 +225,6 @@ def test_against_levenshtein(min_length: int, max_length: int):
     """
 
 
-"""
-Test that alignment and (just) scoring functions return the same scores for global and local alignments.
-
-Ensures that Needleman-Wunsch-Gotoh and Smith-Waterman-Gotoh alignment functions return the same scores
-as their scoring-only counterparts for sequences of varying lengths within a specified alphabet.
-"""
-
-
 @pytest.mark.repeat(30)
 @pytest.mark.parametrize("min_length", [3, 7])
 @pytest.mark.parametrize("max_length", [7, 15])
@@ -237,6 +240,12 @@ def test_scoring_vs_alignment(
     gap_opening: int,
     mode: str,
 ):
+    """
+    Test that alignment and (just) scoring functions return the same scores for global and local alignments.
+
+    Ensures that Needleman-Wunsch-Gotoh and Smith-Waterman-Gotoh alignment functions return the same scores
+    as their scoring-only counterparts for sequences of varying lengths within a specified alphabet.
+    """
 
     alphabet = "ACGT"
     str1 = "".join(choice(alphabet) for _ in range(randint(min_length, max_length)))
@@ -274,14 +283,6 @@ def test_scoring_vs_alignment(
     """
 
 
-"""
-Test the effect of gap expansions on alignment scores.
-
-Verifies that increasing the width of gaps in alignments with zero gap extension penalties 
-does not change the alignment score, ensuring proper handling of gap costs.
-"""
-
-
 @pytest.mark.parametrize("min_length", [5, 10])
 @pytest.mark.parametrize("max_length", [15, 25])
 @pytest.mark.parametrize("match_score", [1, 2, 3])
@@ -294,6 +295,12 @@ def test_gap_expansions(
     mismatch_score: int,
     gap_opening: int,
 ):
+    """
+    Test the effect of gap expansions on alignment scores.
+
+    Verifies that increasing the width of gaps in alignments with zero gap extension penalties
+    does not change the alignment score, ensuring proper handling of gap costs.
+    """
 
     alphabet = "ACGT"
     str1 = "".join(choice(alphabet) for _ in range(randint(min_length, max_length)))
@@ -361,14 +368,6 @@ def test_gap_expansions(
         """
 
 
-"""
-Compare affine gap alignment scores with BioPython for specific examples.
-
-Ensures that the Needleman-Wunsch-Gotoh alignment scores are at least as good as 
-BioPython's PairwiseAligner scores for a set of sequence pairs and scoring parameters.
-"""
-
-
 @pytest.mark.parametrize(
     "pair",
     [
@@ -394,6 +393,12 @@ def test_against_biopython_examples(
     scores: Tuple[int, int, int, int],
     mode: Literal["global", "local"],
 ):
+    """
+    Compare affine gap alignment scores with BioPython for specific examples.
+
+    Ensures that the Needleman-Wunsch-Gotoh alignment scores are at least as good as
+    BioPython's PairwiseAligner scores for a set of sequence pairs and scoring parameters.
+    """
     a, b = pair
     match, mismatch, open_gap_score, extend_gap_score = scores
 
@@ -425,14 +430,6 @@ def test_against_biopython_examples(
         )
 
 
-"""
-Compare affine gap alignment scores with BioPython for random sequences.
-
-Verifies that the Needleman-Wunsch-Gotoh alignment scores are at least as good as 
-BioPython's PairwiseAligner scores for randomly generated sequences with various gap penalties.
-"""
-
-
 @pytest.mark.repeat(30)
 @pytest.mark.parametrize("first_length", [20, 100])
 @pytest.mark.parametrize("second_length", [20, 100])
@@ -454,6 +451,12 @@ def test_against_biopython_fuzzy(
     gap_scores: Tuple[int, int],
     mode: Literal["global", "local"],
 ):
+    """
+    Compare affine gap alignment scores with BioPython for random sequences.
+
+    Verifies that the Needleman-Wunsch-Gotoh alignment scores are at least as good as
+    BioPython's PairwiseAligner scores for randomly generated sequences with various gap penalties.
+    """
     open_gap_score, extend_gap_score = gap_scores
 
     # Make sure we generate different strings each time
