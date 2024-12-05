@@ -2,11 +2,6 @@ from typing import Tuple, Optional, Callable
 
 import numpy as np
 import numba as nb
-from colorama import Fore, Style
-from colorama import init as _colorama_init
-
-
-_colorama_init(autoreset=True)
 
 # Constants for operation codes
 MATCH, INSERT, DELETE, SUBSTITUTE = 0, 1, 2, 3
@@ -860,6 +855,8 @@ def colorize_alignment(align1: str, align2: str, background: str = "dark") -> Tu
         raise ValueError("Background must be either 'dark' or 'light'")
 
     # Define color schemes
+    from colorama import Fore, Style
+
     if background == "dark":
         match_color = Fore.GREEN
         mismatch_color = Fore.RED
@@ -952,7 +949,15 @@ def main():
         print("Error:", exc)
         exit(1)
 
-    colored1, colored2 = colorize_alignment(align1, align2)
+    # Colored output may require additional dependencies
+    try:
+        from colorama import init as _colorama_init
+
+        _colorama_init(autoreset=True)
+        colored1, colored2 = colorize_alignment(align1, align2)
+    except Exception:
+        colored1, colored2 = align1, align2
+
     print()
     print("Sequence 1:", args.seq1)
     print("Sequence 2:", args.seq2)
