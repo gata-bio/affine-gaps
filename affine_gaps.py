@@ -78,6 +78,18 @@ def _reconstruct_alignment(
             i -= 1
             j -= 1
 
+    # Add remaining characters from `seq1` (with gaps in `seq2`)
+    while i > 0:
+        align1 += code_to_char(seq1[i - 1])
+        align2 += "-"
+        i -= 1
+
+    # Add remaining characters from `seq2` (with gaps in `seq1`)
+    while j > 0:
+        align1 += "-"
+        align2 += code_to_char(seq2[j - 1])
+        j -= 1
+
     return align1[::-1], align2[::-1]
 
 
