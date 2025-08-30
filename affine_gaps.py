@@ -5,6 +5,7 @@ import numba as nb
 from colorama import Fore, Style
 from colorama import init as _colorama_init
 
+__version__ = "0.2.1"
 
 _colorama_init(autoreset=True)
 

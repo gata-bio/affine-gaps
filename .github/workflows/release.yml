@@ -32,6 +32,7 @@ jobs:
           update-version-in: |
             pyproject.toml:^version = "(\d+\.\d+\.\d+)"
             setup.py:    version="(\d+\.\d+\.\d+)"
+            affine_gaps.py:^__version__ = "(\d+\.\d+\.\d+)"
           dry-run: "false"
           push: "true"
           create-release: "true"
