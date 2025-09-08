@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="affine-gaps",
-    version="0.2.2",
+    version="0.2.3",
     author="Ash Vardanian",
     author_email="1983160+ashvardanian@users.noreply.github.com",
     description="Numba-accelerated Python implementation of affine gap penalty extensions for Needleman-Wunsch and Smith-Waterman algorithms",

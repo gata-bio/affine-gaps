@@ -18,7 +18,7 @@ except Exception:  # pragma: no cover - fallback when Numba isn't available
 from colorama import Fore, Style
 from colorama import init as _colorama_init
 
-__version__ = "0.2.2"
+__version__ = "0.2.3"
 
 _colorama_init(autoreset=True)
 
