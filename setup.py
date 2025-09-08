@@ -10,14 +10,17 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/ashvardanian/affine-gaps",
     py_modules=["affine_gaps"],
-    install_requires=["numba", "numpy", "colorama"],
+    install_requires=["numpy", "colorama"],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: Apache Software License",
         "Operating System :: OS Independent",
     ],
     python_requires=">=3.6",
-    extras_require={"dev": ["biopython", "stringzilla", "pytest", "pytest-repeat"]},
+    extras_require={
+        "dev": ["biopython", "stringzilla", "pytest", "pytest-repeat"],
+        "numba": ["numba"],
+    },
     entry_points={
         "console_scripts": [
             "affine-gaps=affine_gaps:main",

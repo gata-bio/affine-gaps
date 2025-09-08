@@ -10,10 +10,10 @@ pytest test.py -s -x
 Alternatively, consider using `uv`:
 
 ```sh
-uv venv --python 3.12                       # Or your preferred Python version
-source .venv/bin/activate                   # To activate the virtual environment
-uv pip install ".[dev]"                     # To install the package and development dependencies
-uv run pytest -ra -q test.py                # To run the tests
+uv venv --python 3.12           # Or your preferred Python version
+source .venv/bin/activate       # To activate the virtual environment
+uv pip install ".[dev]"         # To install the package and development dependencies
+uv run pytest -ra -q test.py    # To run the tests
 ```
 
 ### Symmetry Test for Needleman-Wunsch

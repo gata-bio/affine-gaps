@@ -1,7 +1,20 @@
 from typing import Tuple, Optional, Callable
 
 import numpy as np
-import numba as nb
+
+# Numba is optional: provide a no-op fallback for the decorator
+try:
+    import numba as nb  # type: ignore
+except Exception:  # pragma: no cover - fallback when Numba isn't available
+    class _NoNumba:
+        def jit(self, *args, **kwargs):
+            def _decorator(fn):
+                return fn
+
+            return _decorator
+
+    nb = _NoNumba()  # type: ignore
+    
 from colorama import Fore, Style
 from colorama import init as _colorama_init
 

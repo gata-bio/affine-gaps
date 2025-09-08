@@ -11,7 +11,7 @@ authors = [
     { name = "Ash Vardanian", email = "1983160+ashvardanian@users.noreply.github.com" },
 ]
 requires-python = ">=3.6"
-dependencies = ["numba", "numpy", "colorama"]
+dependencies = ["numpy", "colorama"]
 keywords = ["bioinformatics", "sequence alignment", "numba", "affine gaps"]
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -21,6 +21,7 @@ classifiers = [
 
 [project.optional-dependencies]
 dev = ["biopython", "stringzilla", "pytest", "pytest-repeat"]
+numba = ["numba"]
 
 [tool.pytest.ini_options]
 addopts = "-s -x"
