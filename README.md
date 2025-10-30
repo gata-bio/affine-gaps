@@ -30,8 +30,19 @@ During my exploration of exiting implementations, I've noticed several bugs:
 
 ## Installation
 
+Numba is optional.
+Installing without it gives a pure-Python baseline; installing with the `numba` extra enables JIT acceleration when a compatible Numba is available.
+
+```sh
+uv pip install affine-gaps          # minimal
+uv pip install 'affine-gaps[numba]' # with JIT
+```
+
+Even without installing Python or touching PyPi, you can just use `uv` to get the latest version of the library:
+
 ```bash
-pip install git+https://github.com/ashvardanian/affine-gaps.git
+$ uv tool install git+https://github.com/ashvardanian/affine-gaps.git
+$ affine-gaps --help
 ```
 
 ## Using the Library

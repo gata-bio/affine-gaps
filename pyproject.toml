@@ -22,6 +22,7 @@ classifiers = [
 [project.optional-dependencies]
 jit = ["numba", "colorama"]
 dev = ["biopython", "stringzilla", "pytest", "pytest-repeat"]
+numba = ["numba"]
 
 [tool.pytest.ini_options]
 addopts = "-s -x"
