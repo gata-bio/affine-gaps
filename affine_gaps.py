@@ -57,7 +57,7 @@ try:
 except ImportError:
     HAS_NUMBA = False
 
-__version__ = "0.2.3"
+__version__ = "0.2.4"
 
 # Define decorator to handle optional NumBa
 def jit_if_available(*jit_args, **jit_kwargs):

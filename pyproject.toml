@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "affine-gaps"
-version = "1.0.1"
+version = "0.2.4"
 description = "JIT-compiled string edit-distances including Needleman-Wunsch, Smith-Waterman, Wagner-Fisher, and Gotoh algorithms."
 readme = { file = "README.md", content-type = "text/markdown" }
 authors = [
